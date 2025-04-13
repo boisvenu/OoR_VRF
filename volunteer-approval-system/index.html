@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script>
+      function fetchSubmissions() {
+        google.script.run.withSuccessHandler(displaySubmissions).getSubmissions();
+      }
+
+      function displaySubmissions(data) {
+        var table = "<table border='1'><tr><th>Name</th><th>Department</th><th>Waiver</th><th>Background Check</th><th>Approve/Deny</th></tr>";
+        data.forEach(row => {
+          table += `<tr>
+            <td>${row.name}</td>
+            <td>${row.department}</td>
+            <td><a href="${row.waiver}" target="_blank">View Waiver</a></td>
+            <td>${row.background ? `<a href="${row.background}" target="_blank">View Background Check</a>` : "N/A"}</td>
+            <td>
+              <button onclick="approveRequest('${row.id}')">Approve</button>
+              <button onclick="denyRequest('${row.id}')">Deny</button>
+            </td>
+          </tr>`;
+        });
+        table += "</table>";
+        document.getElementById("content").innerHTML = table;
+      }
+
+      function approveRequest(id) {
+        google.script.run.processApproval(id, "Approved");
+        alert("Request Approved");
+      }
+
+      function denyRequest(id) {
+        google.script.run.processApproval(id, "Denied");
+        alert("Request Denied");
+      }
+
+      window.onload = fetchSubmissions;
+    </script>
+  </head>
+  <body>
+    <h2>Volunteer Approvals</h2>
+    <div id="content">Loading...</div>
+  </body>
+</html>
