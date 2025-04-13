@@ -65,3 +65,9 @@ Utility function to append timestamp and initialize tracking.
 
 For help or updates, contact: **vdradmin@ualberta.ca**
 
+
+## License
+
+This project is licensed under the [CC BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).  
+You are free to use and adapt it for non-commercial purposes with attribution.
+
