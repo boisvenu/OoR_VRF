@@ -151,20 +151,33 @@ if (sheetId === 362146665) {
 
   // ----- 4. Initial Form Submission -----
   else if (sheetId === 1447833263) {
-    var uniqueId = generateUniqueId();
-    Logger.log("Generated Unique ID: " + uniqueId);
 
-    var sourceRowIndex = e.range.getRow();
-    sourceSheet.getRange(sourceRowIndex, 24).setValue(uniqueId);
+  var uniqueId = generateUniqueId();
+  Logger.log("Generated Unique ID: " + uniqueId);
 
-    statusSheet.appendRow([uniqueId, "Chair"]);
-    SpreadsheetApp.flush();
+  var sourceRowIndex = e.range.getRow();
+  sourceSheet.getRange(sourceRowIndex, 24).setValue(uniqueId);
 
-    var sourceRow = sourceSheet.getRange(sourceRowIndex, 1, 1, sourceSheet.getLastColumn()).getValues()[0];
-    sendChairApprovalEmail(sourceRow[2], sourceRow[6], sourceRow[4], sourceRow[5], uniqueId);
-  }
+  statusSheet.appendRow([uniqueId, "Chair"]);
+  SpreadsheetApp.flush();
+
+  var sourceRow = sourceSheet.getRange(sourceRowIndex, 1, 1, sourceSheet.getLastColumn()).getValues()[0];
+
+  sendChairApprovalEmail(sourceRow[2], sourceRow[6], sourceRow[4], sourceRow[5], uniqueId);
+  sendSubmissionConfirmationEmail(
+    sourceRow[1], // requesterEmail
+    sourceRow[2], // requesterName
+    sourceRow[6], // volunteerName
+    uniqueId,
+    sourceRow[4], // chairName
+    sourceRow[5], // chairEmail
+    sourceRow[16], // hrName
+    sourceRow[17], // hrEmail
+    sourceRow[19], // waiverLink (Column T)
+    sourceRow[22]  // backgroundLink (Column W)
+  );
 }
-
+}
 
 
 // Chair Approval Email
@@ -252,6 +265,16 @@ function sendOoRApprovalEmail(requesterName, volunteerName, oorName, oorEmail, u
     return;
   }
 
+  // Static TO list: actual approvers
+  var toRecipients = [
+    "gvilas@ualberta.ca",
+    "rlehner@ualberta.ca",
+    "npannu@ualberta.ca"
+  ].join(",");
+
+  // CC: Office of Research
+  var ccRecipients = "vdradmin@ualberta.ca";
+
   var baseApprovalFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLScX5PPBMboXUJZlOVERKUNYOWLWD089LEFDlufId91LrX7wKA/viewform";
   var preFilledApprovalLink = baseApprovalFormUrl +
     "?usp=pp_url" +
@@ -265,23 +288,24 @@ function sendOoRApprovalEmail(requesterName, volunteerName, oorName, oorEmail, u
   var subject = "Action Required: OoR Approval for Volunteer Request - " + volunteerName;
   var htmlBody = `
     <div style="font-family:sans-serif">
-      Dear ${oorName},<br><br>
-      A FoMD Volunteer Request for <strong>${volunteerName}</strong> has been approved by an FoMD Department Chair and HR Partner.<br><br>
+      Dear Office of Research Approvers,<br><br>
+      A FoMD Volunteer Request for <strong>${volunteerName}</strong> has been approved by a Department Chair and HR Partner.<br><br>
       <strong>Please review the submission summary below and click here to provide final approval:</strong><br>
       <a href="${preFilledApprovalLink}">OoR Final Approval Form</a><br><br>
       ${summaryHtml}<br><br>
-      This is an automated message. If you are unable to access the approval form or documentation, please contact the FoMD Office of Research (vdradmin@ualberta.ca).<br><br>
-
+      This is an automated message. If you are unable to access the approval form or documentation, please contact the FoMD Office of Research at 
+      <a href="mailto:vdradmin@ualberta.ca">vdradmin@ualberta.ca</a>.<br><br>
     </div>
   `;
 
   MailApp.sendEmail({
-    to: oorEmail,
+    to: toRecipients,
+    cc: ccRecipients,
     subject: subject,
-    htmlBody: htmlBody,
+    htmlBody: htmlBody
   });
 
-  Logger.log("✅ OoR Approval Email sent to: " + oorEmail);
+  Logger.log("✅ OoR Approval Email sent to: " + toRecipients + " (cc: " + ccRecipients + ")");
 }
 
 
@@ -292,11 +316,27 @@ function sendFinalApprovalEmail(requesterName, volunteerName, requesterEmail, ch
     return;
   }
 
-  // Add the OoR Admin email address
   var oorAdminEmail = "vdradmin@ualberta.ca";
 
-  // Collect all valid email recipients
-  var allRecipients = [requesterEmail, chairEmail, hrEmail, oorEmail, oorAdminEmail]
+  // Add additional recipients here (they will be CC'd)
+  var additionalFinalRecipients = [
+    "boisvenu@ualberta.ca",
+    "underhil@ualberta.ca",
+    "nkosturi@ualberta.ca",
+    "crilov@ualberta.ca",
+    "shughes1@ualberta.ca",
+    "rlehner@ualberta.ca",
+    "gvilas@ualberta.ca",
+    "npannu@ualberta.ca"
+  ];
+
+  // Build the main recipients list
+  var toRecipients = [requesterEmail, chairEmail, hrEmail, oorEmail, oorAdminEmail]
+    .filter(email => email && email.includes("@"))
+    .join(",");
+
+  // Build the cc list
+  var ccRecipients = additionalFinalRecipients
     .filter(email => email && email.includes("@"))
     .join(",");
 
@@ -307,14 +347,16 @@ function sendFinalApprovalEmail(requesterName, volunteerName, requesterEmail, ch
              "If you have any questions, please contact the Office of Research Administrator (vdradmin@ualberta.ca).\n\n";
 
   MailApp.sendEmail({
-    to: allRecipients,
+    to: toRecipients,
+    cc: ccRecipients,
     subject: subject,
     body: body,
     attachments: [pdfFile.getAs(MimeType.PDF)]
   });
 
-  Logger.log("✅ Final approval email sent to: " + allRecipients);
+  Logger.log("✅ Final approval email sent to: " + toRecipients + " (cc: " + ccRecipients + ")");
 }
+
 
 
 /**
@@ -565,10 +607,71 @@ function createFinalPDF(requesterName, volunteerName, uniqueId) {
 
   doc.saveAndClose();
   var pdfBlob = DriveApp.getFileById(doc.getId()).getAs(MimeType.PDF);
-  Logger.log("✅ PDF Created Successfully");
+  Logger.log("PDF Created Successfully");
   return pdfBlob;
 }
 
 
+function sendSubmissionConfirmationEmail(requesterEmail, requesterName, volunteerName, uniqueId, chairName, chairEmail, hrName, hrEmail, waiverLink, backgroundLink) {
+  const subject = `Confirmation: Volunteer Request Submitted for ${volunteerName}`;
+
+  // Fix Drive URL formatting if it's in the open?id= format
+  const formatDriveLink = (link) => {
+    const match = link.match(/[-\w]{25,}/);
+    return match ? `https://drive.google.com/file/d/${match[0]}/view?usp=sharing` : link;
+  };
+
+  const waiverFormatted = formatDriveLink(waiverLink);
+  const backgroundFormatted = formatDriveLink(backgroundLink);
+
+  const htmlBody = `
+    <div style="font-family:sans-serif; font-size:14px;">
+      <p>Dear ${requesterName},</p>
+
+      <p>Thank you for submitting a volunteer request for <strong>${volunteerName}</strong>.</p>
+
+      <p>Your submission has been received and is pending approval from the following individuals:</p>
+
+      <ul>
+        <li><strong>Department Chair:</strong> ${chairName} (${chairEmail})</li>
+        <li><strong>HR Partner:</strong> ${hrName} (${hrEmail})</li>
+        <li><strong>Office of Research Approvers:</strong> Gonzalo Vilas (gvilas@ualberta.ca), Richard Lehner (rlehner@ualberta.ca), Neesh Pannu (npannu@ualberta.ca)</li>
+        <li><strong>Office of Research Administrator:</strong> vdradmin@ualberta.ca</li>
+      </ul>
+
+      <p><strong>Action Required:</strong> Please ensure the following files are shared with all approvers listed above <em>using their email addresses</em>:</p>
+
+      <ul>
+        <li><a href="${waiverFormatted}" target="_blank">Waiver Upload</a></li>
+        <li><a href="${backgroundFormatted}" target="_blank">Background Check Upload</a></li>
+      </ul>
+
+      <p>To do this:</p>
+      <ol>
+        <li>Click on each link above.</li>
+        <li>In the top-right of the Google Drive preview, click the <strong>Share</strong> button.</li>
+        <li>Add the approvers’ email addresses and set their access to <strong>Editor</strong> and uncheck "Notify People".</li>
+        <li>Click <strong>Send</strong>.</li>
+      </ol>
+
+      <p><strong>If these files are not shared properly, approvers will not be able to access them</strong>, and your request may be delayed or rejected.</p>
+
+      <p><strong>Tracking ID:</strong> <code>${uniqueId}</code></p>
+
+      <p>If you have questions, please contact the Office of Research at 
+      <a href="mailto:vdradmin@ualberta.ca">vdradmin@ualberta.ca</a>.</p>
+
+      <p style="margin-top:20px; font-size:12px;">This is an automated message from the FoMD Volunteer Management System.</p>
+    </div>
+  `;
+
+  MailApp.sendEmail({
+    to: requesterEmail,
+    subject: subject,
+    htmlBody: htmlBody
+  });
+
+  Logger.log(`✅ Confirmation email sent to: ${requesterEmail}`);
+}
 
 
