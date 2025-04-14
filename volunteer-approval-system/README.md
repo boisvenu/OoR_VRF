@@ -1,73 +1,109 @@
 # Volunteer Approval System for FoMD
 
-This Google Apps Script-based system automates multi-stage approvals for volunteer onboarding in the Faculty of Medicine & Dentistry (FoMD). It collects information through a Google Form, manages approvals through three sequential approvers, and generates a final PDF once all approvals are complete.
+This Google Apps Script-based system automates a structured, multi-stage approval workflow for volunteer onboarding in the Faculty of Medicine & Dentistry (FoMD) at the University of Alberta. It integrates Google Forms, Google Sheets, and Drive to manage submissions, coordinate approvals, and generate final PDF summaries.
 
 ---
 
-## 🔄 Workflow Overview
+## Workflow Overview
 
-1. **Initial Form Submission**: The original requester submits a form.
-2. **Chair Approval**: The department chair receives a pre-filled form and reviews the request.
-3. **HR Approval**: If approved by the chair, the HR partner is emailed with a pre-filled form for approval.
-4. **Office of Research Approval (OoR)**: Final review and approval by the Office of Research.
-5. **PDF Generation**: A final summary PDF is created and distributed to all stakeholders.
-6. **Status Tracking**: Each stage is tracked in a dedicated Google Sheet tab.
+1. **Initial Form Submission**  
+   A requester submits a Google Form with details about the volunteer.
+
+2. **Department Chair Approval**  
+   The Department Chair receives a pre-filled approval form via email, reviews the request, and approves or rejects it.
+
+3. **HR Partner Approval**  
+   If Chair approval is granted, an HR Partner receives their own pre-filled approval form.
+
+4. **Office of Research (OoR) Final Approval**  
+   Upon HR approval, the Office of Research reviews the request and provides final approval.
+
+5. **PDF Generation**  
+   Once fully approved, the system compiles all form data and approvals into a PDF summary and emails it to all stakeholders.
+
+6. **Status Tracking**  
+   Each submission is assigned a unique ID and its progress is tracked across tabs in a central Google Sheet.
 
 ---
 
-## 🗂️ Files
+## Files and Structure
 
 ### `Code.gs`
-Main script file. Includes:
-- UUID generation
-- `onApprovalFormSubmit()` routing logic
-- Email functions for Chair, HR, and OoR
-- PDF generation with form summary and approvals
+Main script file containing:
+- `generateUniqueId()` for UUID assignment
+- `onApprovalFormSubmit(e)` to detect form submissions and route logic
+- Email functions: `sendChairApprovalEmail()`, `sendHRApprovalEmail()`, `sendOoRApprovalEmail()`, `sendFinalApprovalEmail()`, `sendRejectionEmail()`, `sendSubmissionConfirmationEmail()`
+- `createFinalPDF()` to compile the final approval package
+- Helper functions: formatting, retrieval, and summary generation
 
-### `index.html`
-Web app interface for real-time review of submission data (optional utility panel for internal use).
+### `index.html` (optional)
+A web interface (if deployed as a Web App) for internal use to review submission data in real time.
 
-### `utils/copyNewTimestampWithUniqueID.gs`
-Utility function to append timestamp and initialize tracking.
-
----
-
-## 🧾 Sheets Structure
-
-| Sheet Name       | Purpose                                      |
-|------------------|----------------------------------------------|
-| Source (ID: `1447833263`) | Raw form responses                  |
-| Chair Approval (ID: `362146665`) | Captures Chair decisions      |
-| HR Approval (ID: `1074532913`) | Captures HR decisions          |
-| OoR Approval (ID: `876106890`) | Captures Office of Research     |
-| Status (ID: `684280098`) | Tracks workflow state per submission |
+### `utils/copyNewTimestampWithUniqueID.gs` (optional utility)
+Used to initialize and time-stamp new submissions with a unique tracking ID.
 
 ---
 
-## ✅ Requirements
+## Google Sheets Structure
 
-- Google Sheet with tab IDs matching those referenced above
-- Three Google Forms (Chair, HR, OoR) with entry prefill mappings
-- Apps Script deployed as a Web App (if using the web review panel)
-- Permissions for the script to send email and access Drive
-
----
-
-## ⚠️ Notes
-
-- Waiver and background check links will appear in the Shared Drive section as viewed files but do not consume Drive space unless copied.
-- All emails are sent automatically based on submission and approval logic.
-- Ensure form column ordering matches expected indexes (e.g., approval decision must be in the correct column).
+| Sheet Name         | Sheet ID      | Description                                 |
+|--------------------|---------------|---------------------------------------------|
+| Source             | `1447833263`  | Stores raw form responses                   |
+| Chair Approval     | `362146665`   | Stores Chair approval responses             |
+| HR Approval        | `1074532913`  | Stores HR approval responses                |
+| OoR Approval       | `876106890`   | Stores final Office of Research decisions   |
+| Status             | `684280098`   | Tracks status progression for each request  |
 
 ---
 
-## 📬 Support
+## Technical Requirements
 
-For help or updates, contact: **vdradmin@ualberta.ca**
+- A central Google Spreadsheet with the above tabs and column ordering aligned to the script
+- Three separate Google Forms (Chair, HR, OoR), each configured to:
+  - Accept pre-filled parameters (e.g., requestor name, volunteer name, unique ID)
+  - Store decisions and optional comments
+- File access:
+  - Submitters must share Waiver and Background Check files via Google Drive
+- Script permissions:
+  - Must be authorized to send email and access Google Drive
+- Deployment:
+  - Script must be deployed as a Web App only if using the optional interface
 
+---
+
+## Behavior Details
+
+- **UUID Generation**: Each submission is assigned a unique identifier for tracking across forms and sheets.
+- **Conditional Routing**: Form submission triggers determine the source sheet and route the request accordingly.
+- **Automated Emails**:
+  - Prefilled approval forms are emailed at each stage.
+  - Rejection triggers notification with comments.
+  - A final PDF is created and emailed only after all three approvals are received.
+- **PDF Composition**:
+  - Includes a logo, form answers, clickable waiver/background links, and an approvals table.
+  - Sent as an attachment to requester, approvers, and administrative contacts.
+
+---
+
+## Known Limitations
+
+- If form structure changes (column order, field labels), script functions must be updated accordingly.
+- Drive file permissions must be managed manually by submitters unless an automated sharing script is added.
+- The system does not currently support re-submission or editing after rejection (can be implemented with version control logic).
+
+---
+
+## Support and Contact
+
+For issues, improvements, or integration assistance, please contact:  
+**FoMD Office of Research**  
+**Email**: vdradmin@ualberta.ca
+
+---
 
 ## License
 
-This project is licensed under the [CC BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).  
-You are free to use and adapt it for non-commercial purposes with attribution.
+This project is licensed under the [Creative Commons BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).  
+You may share and adapt the system for non-commercial use with proper attribution. Commercial use is prohibited without permission.
 
+---
