@@ -24,6 +24,9 @@ This Google Apps Script-based system automates a structured, multi-stage approva
 6. **Status Tracking**  
    Each submission is assigned a unique ID and its progress is tracked across tabs in a central Google Sheet.
 
+7. **Volunteer Request Status Tracker**  
+   Submitters can enter their Unique ID into a web app to view real-time approval progress through each stage.
+
 ---
 
 ## Files and Structure
@@ -41,6 +44,11 @@ A web interface (if deployed as a Web App) for internal use to review submission
 
 ### `utils/copyNewTimestampWithUniqueID.gs` (optional utility)
 Used to initialize and time-stamp new submissions with a unique tracking ID.
+
+### `VolunteerRequestTracker/`
+Standalone web app for submitters to check the status of their volunteer request.
+- `Code.gs` (Web app server-side logic for serving the tracker)
+- `statusChecker.html` (Front-end HTML form and dynamic status display)
 
 ---
 
@@ -60,14 +68,14 @@ Used to initialize and time-stamp new submissions with a unique tracking ID.
 
 - A central Google Spreadsheet with the above tabs and column ordering aligned to the script
 - Three separate Google Forms (Chair, HR, OoR), each configured to:
-  - Accept pre-filled parameters (e.g., requestor name, volunteer name, unique ID)
+  - Accept pre-filled parameters (e.g., requester name, volunteer name, unique ID)
   - Store decisions and optional comments
 - File access:
   - Submitters must share Waiver and Background Check files via Google Drive
 - Script permissions:
   - Must be authorized to send email and access Google Drive
 - Deployment:
-  - Script must be deployed as a Web App only if using the optional interface
+  - Script must be deployed as a Web App only if using the optional interfaces
 
 ---
 
@@ -79,6 +87,9 @@ Used to initialize and time-stamp new submissions with a unique tracking ID.
   - Prefilled approval forms are emailed at each stage.
   - Rejection triggers notification with comments.
   - A final PDF is created and emailed only after all three approvals are received.
+- **Volunteer Status Tracking**:
+  - A web app allows submitters to track progress by entering their Unique ID.
+  - Displays approval status, rejection reasons, and current approver in real-time.
 - **PDF Composition**:
   - Includes a logo, form answers, clickable waiver/background links, and an approvals table.
   - Sent as an attachment to requester, approvers, and administrative contacts.
