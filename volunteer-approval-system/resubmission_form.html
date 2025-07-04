@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <title>FoMD Volunteer Request Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            color: #003C1E;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        strong {
+          font-weight: 500;
+          color: #005C2E; /* Softer U of A dark green */
+        }
+
+
+        h1, h2, h3 {
+            color: #003C1E;
+        }
+
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            padding: 20px 15px 80px 15px;
+            box-sizing: border-box;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .form-group {
+            margin-bottom: 1em;
+        }
+
+        label {
+            display: block;
+            font-weight: normal;
+            margin-bottom: 0.6em;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        .button-group {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background: #f9f9f9;
+            padding: 10px;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: #FFCC33;
+            color: #003C1E;
+            border: none;
+            border-radius: 6px;
+            margin: 0 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #e6b800;
+        }
+
+        .inline-options {
+          display: flex;
+          gap: 30px;
+          margin-top: 6px;
+        }
+
+        .inline-options label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-weight: normal;
+          white-space: nowrap;
+          font-size: 0.95em;
+        }
+
+        /* Responsive layout for smaller screens */
+        @media (max-width: 600px) {
+          .inline-options {
+            flex-direction: column;
+            gap: 12px;
+          }
+        }
+        #resubmissionBanner {
+          background-color: #e6f4ea; /* Light green background */
+          color: #003C1E; /* U of A dark green text */
+          border: 1px solid #99c199; /* Border similar to the background */
+          padding: 15px 20px;
+          text-align: center;
+          border-radius: 8px;
+          font-weight: 500;
+          margin: 20px auto 0 auto;
+          max-width: 700px;
+          display: block;
+        }
+
+
+    </style>
+</head>
+<body>
+  <div id="resubmissionBanner">
+    This is a resubmission from UID <strong><span id="originalIdSpan">[loading]</span></strong>. Please review and re-complete the required fields.
+  </div>
+    <form id="resubmissionForm" novalidate>
+        <div class="page active" id="page1" style="line-height: 1.5">
+              <input type="hidden" id="tracking" value="<?= tracking ?>">
+              <div style="text-align: left; font-size: 0.7em; color: #666; margin-top: 10px;">
+            Version 240220250620
+          </div>
+              <img src="https://i.imgur.com/ATmfsjU.png" alt="FoMD Logo" style="max-width: 300px; display: block; margin: 0 auto 20px;">
+              <h1 style="text-align: center; margin-bottom: 0;">Faculty of Medicine & Dentistry</h1>
+              <h2 style="text-align: center; margin-top: 0;"> Volunteer Request Form</h2>
+
+              <p><em><strong>Before engaging a volunteer,</strong> the Principal Investigator (PI) must complete this form to obtain FoMD internal approval. This ensures compliance with institutional policies, risk management, and employment agreements while aligning with FoMD’s strategic goals.</em></p>
+
+              <h3>Process Overview:</h3>
+              <ul>
+                  <li><strong>Submission</strong> – The PI completes this form with input from their <a href="https://apps.ualberta.ca/support?_gl=1*1rvfb2g*_gcl_au*MTg1MTM2NjYzMy4xNzM1ODQ4NDA3*_ga*MTA3NjY0NzUwNy4xNzE5OTUxMDkw*_ga_21TWH2P5G7*MTc0MTg5NjAzOC4zNDYuMS4xNzQxODk2MTY4LjQxLjAuNzAxOTI5MDI5" target="_blank">Department HR </a> and ADM.</li>
+                  <li><strong>Department Chair Review</strong> – The request is sent to the Department Chair for endorsement.</li>
+                  <li><strong>Department HR Review</strong> – After Chair approval, Department HR reviews the request. </li>
+                  <li><strong>Office of Research Review</strong> – Final decision is made by an FoMD Vice-Dean of Research (or delegate).</li>
+                  <li><strong>Decision Notification</strong> – The requestor will be notified by email.</li>
+                  <li><strong>ADMs</strong> are notified as the request moves through the approval process.</li>
+              </ul>
+
+              <h3>Important Notes:</h3>
+              <ul>
+                  <li>Always refer to the <a href ="https://www.ualberta.ca/en/medicine/media-library/research/research-resources/fomd-volunteer-procedure-april-9-2025.pdf.pdf" target="_blank">Volunteer Procedure</a> if you are unsure about allowable tasks and duties associated with your volunteer.</li>
+                  <li>This form must be completed <strong>before</strong> recruiting a volunteer.</li>
+                  <li>Incomplete or duplicate requests will be rejected.</li>
+                  <li>Volunteer registration, waivers, and background checks (if needed) must be obtained through the <a href="https://www.ualberta.ca/en/finance-procurement-planning/insurance/volunteers.html" target="_blank" style="color: #003C1E; text-decoration: underline;">Risk Management & Insurance Office</a> and retained by your department. These documents are not required for this request.</li>
+              </ul>
+
+              <p style="text-align: center; margin-top: 1em;">
+                Questions? Contact FoMD Office of Research <a href="mailto:vdradmin@ualberta.ca">(vdradmin@ualberta.ca)</a>.
+              </p>
+        </div>
+        <div class="page" id="page4">
+          <h2>Department HR Consultation</h2>
+
+          <div class="form-group">
+              <label for="consultedHR">Have you consulted with your Department HR?</label>
+              <select id="consultedHR" name="consultedHR" required>
+                  <option value="">Select an option</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+              </select>
+          </div>
+
+         <div id="hrContactFields" style="display:none;">
+            <div class="form-group">
+              <label for="hrName">Department HR Name</label>
+              <select id="hrName" name="hrName" onchange="populateHREmail()" required>
+                <option value="">Select HR</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="hrEmail">Department HR Email</label>
+              <input type="email" id="hrEmail" name="hrEmail" readonly required>
+            </div>
+          </div>
+
+          <div id="hrWarning" style="display:none; color: #a94442; background: #f2dede; padding: 10px; border: 1px solid #ebccd1; border-radius: 5px;">
+              <strong>Before proceeding:</strong> You must consult with your department HR and ADM to determine whether the volunteer position that you are requesting aligns with the FoMD and UofA policies. This may include the requirement for a police background check. Refer to this <a href="https://apps.ualberta.ca/support?_gl=1*1rvfb2g*_gcl_au*MTg1MTM2NjYzMy4xNzM1ODQ4NDA3*_ga*MTA3NjY0NzUwNy4xNzE5OTUxMDkw*_ga_21TWH2P5G7*MTc0MTg5NjAzOC4zNDYuMS4xNzQxODk2MTY4LjQxLjAuNzAxOTI5MDI5" target="_blank">Department HR </a> webpage if you are unsure who to contact.
+          </div>
+      </div>
+
+        <div class="page" id="page3">
+            <h2>Contact Information</h2>
+            <div class="form-group">
+                <label for="requesterName">Requester Name</label>
+                <input type="text" id="requesterName" name="requesterName" required>
+            </div>
+            <div class="form-group">
+                <label for="requesterEmail">Requester Email</label>
+                <input type="email" id="requesterEmail" name="requesterEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="unit">Department</label>
+              <select id="unit" name="unit" required>
+                <option value="">Select a Department</option>
+                <option value="Anesthesiology & Pain Med">Anesthesiology & Pain Med</option>
+                <option value="Biochemistry">Biochemistry</option>
+                <option value="Cell Biology">Cell Biology</option>
+                <option value="Critical Care Medicine">Critical Care Medicine</option>
+                <option value="Dentistry">Dentistry</option>
+                <option value="Emergency Medicine">Emergency Medicine</option>
+                <option value="Family Medicine">Family Medicine</option>
+                <option value="Laboratory Med & Pathology">Laboratory Med & Pathology</option>
+                <option value="Medical Genetics">Medical Genetics</option>
+                <option value="Med Microbiology/Immunology">Med Microbiology/Immunology</option>
+                <option value="Medicine">Medicine</option>
+                <option value="Obstetrics & Gynecology">Obstetrics & Gynecology</option>
+                <option value="Oncology">Oncology</option>
+                <option value="Ophthalmology and Visual Sciences">Ophthalmology and Visual Sciences</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="Pharmacology">Pharmacology</option>
+                <option value="Physiology">Physiology</option>
+                <option value="Psychiatry">Psychiatry</option>
+                <option value="Radiology/Diagnostic Imaging">Radiology/Diagnostic Imaging</option>
+                <option value="Surgery">Surgery</option>
+                <option value="Test">Test</option>
+              </select>
+            </div>
+            <!-- Chair is auto-filled, no dropdown -->
+            <div class="form-group">
+              <label for="departmentChairName">Department Chair Name</label>
+              <input type="text" id="departmentChairName" name="departmentChairName" readonly required>
+            </div>
+
+            <div class="form-group">
+              <label for="chairEmail">Department Chair Email</label>
+              <input type="email" id="chairEmail" name="chairEmail" readonly required>
+            </div>
+        </div>
+
+        <div class="page" id="pageVolunteerDetails">
+          <h2>Volunteer Information and Role Details</h2>
+          <div class="form-group">
+            <label for="volunteerName">Volunteer Name *</label>
+            <input type="text" id="volunteerName" name="volunteerName" required>
+          </div>
+
+          <div class="form-group">
+            <label for="dob">Volunteer DOB (Volunteers must be at least 18 years old unless participating in an approved program for minors) *</label>
+            <input type="date" id="dob" name="dob" required>
+          </div>
+
+          <div class="form-group">
+            <label for="program">If the volunteer is participating in an approved program for minors, please provide the relevant information of the program here</label>
+            <input type="text" id="program" name="program">
+          </div>
+
+          <div class="form-group">
+            <label>Immigration Status: *</label>
+            <div class="inline-options">
+              <label><input type="checkbox" name="immigrationStatus" value="Canadian Citizen"> Canadian Citizen</label>
+              <label><input type="checkbox" name="immigrationStatus" value="Permanent Resident"> Permanent Resident</label>
+              <label><input type="checkbox" name="immigrationStatus" value="Student Visa"> Student Visa</label>
+              <label><input type="checkbox" name="immigrationStatus" value="Visitor Visa"> Visitor Visa</label>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label>International Volunteers ONLY: Has the individual confirmed that their immigration status permits unpaid volunteer activities? *</label>
+            <div class="inline-options">
+              <label><input type="radio" name="immigrationPermission" value="Yes" required> Yes</label>
+              <label><input type="radio" name="immigrationPermission" value="No"> No</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="roleTitle">Title of Volunteer Role</label>
+            <input type="text" id="roleTitle" name="roleTitle">
+          </div>
+
+          <div class="form-group">
+            <label for="tasks">Tasks & Duties *</label>
+            <textarea id="tasks" name="tasks" rows="4" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="justification">Justification for the Role *</label>
+            <textarea id="justification" name="justification" rows="4" required></textarea>
+          </div>
+
+
+          <div class="form-group">
+            <label>Duration of Placement *</label>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 150px;">
+                <label for="startDate">Start Date</label>
+                <input type="date" id="startDate" name="startDate" required>
+              </div>
+              <div style="flex: 1; min-width: 150px;">
+                <label for="endDate">End Date</label>
+                <input type="date" id="endDate" name="endDate" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="maxHoursPerWeek" style="font-family: 'Roboto', sans-serif; font-weight: 500;">
+              Maximum Number of Volunteer Hours per Week
+            </label>
+            <input
+              type="number"
+              id="maxHoursPerWeek"
+              name="maxHoursPerWeek"
+              min="1"
+              max="168"
+              required
+              placeholder="Enter a number"
+              style="width: 100%; padding: 8px; font-family: 'Roboto', sans-serif;"
+            />
+          </div>
+
+        </div>
+      </div>
+       <div class="page" id="pageIdentifiedRisks">
+          <!-- Identified Risks Section -->
+          <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 30px; background-color: #fdfdfd;">
+            <h2>Volunteer Risk Management</h2>
+            <div style="border: 2px solid #005C2E; border-radius: 8px; padding: 20px; background-color: #f2fdf2;">
+              <h3 style="margin-top: 0;">Risk Management Disclaimer</h3>
+              <p style="font-size: 0.95em; color: #003C1E;">
+                In order to manage the risks and liabilities inherent in volunteer activities, university faculties and departments must ensure compliance with university policies and procedures. Failure to meet these requirements may result in delays or denial of the volunteer request. This includes:
+              </p>
+              <ul style="margin-top: 10px; margin-bottom: 0; padding-left: 20px; font-size: 0.95em; color: #003C1E;">
+                <li>Registering all volunteers to ensure eligibility for WCB coverage.</li>
+                <li>Obtaining a signed volunteer waiver or informed consent form (for minors) to clarify duties, duration, and reporting relationships.</li>
+                <li>Storing all volunteer waivers in accordance with university guidelines.</li>
+                <li>Providing appropriate training and hazard/safety orientations.</li>
+                <li>Immediately reporting all incidents or injuries associated with volunteer activity.</li>
+              </ul>
+              <p style="font-size: 0.95em; color: #003C1E;">
+                If not already completed, you will recieve further instructions about obtaining a waiver and background check (if required) upon final approval of this request.
+              </p>
+            </div>
+            <label for="riskDetails" style="margin-top: 20px; display:block;">Identified Risks</label>
+            <textarea id="riskDetails" name="riskDetails" rows="3"></textarea>
+          </div>
+
+          <!-- Security/Background Check Note -->
+          <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 30px; background-color: #fdfdfd;">
+            <h2>Security/Background Check Requirements</h2>
+            <p style="font-size: 0.95em; color: #333;">
+              To protect the privacy and identity of volunteers, all volunteer waivers and background checks (if applicable) are managed through  <a href="https://www.ualberta.ca/en/finance-procurement-planning/insurance/volunteers.html" target="_blank" style="color: #003C1E; text-decoration: underline;">Risk Management & Insurance with Finance, Procurement, and Planning</a>. The requirements for this documentation will have been provided to you in consultation with your department HR and ADM prior to submitting this request.
+            </p>
+          </div>
+        </div>
+
+        <div id="hrConsultationError" style="display:none; color: #a94442; margin-top: 10px; font-weight: normal; text-align: center;">
+            You must consult with your Department HR prior to completing this form.
+        </div>
+        <div id="formPageError" style="display:none; color: #a94442; margin: 10px 0; font-weight: normal; text-align: center;">
+          Please complete all required fields before continuing.
+        </div>
+        <div class="button-group">
+          <button type="button" id="prevBtn">Back</button>
+          <button type="button" id="nextBtn">Next</button>
+          <button type="button" id="submitBtn" style="display:none;">Submit</button>
+        </div>
+    </form>
+
+<script>
+  const approvers = { Chair: [], HR: [] };
+  const isResubmission = true;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector("form");
+    let currentPage = 0;
+    const pages = document.querySelectorAll('.page');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const trackingId = <?= JSON.stringify(tracking || '').replace(/"/g, '') ?>;
+    
+
+    // Set tracking ID from URL into hidden input
+    console.log("Running script…");
+    console.log("✅ trackingId =", trackingId);
+    if (trackingId) {
+      document.getElementById("tracking").value = trackingId;
+      const span = document.getElementById("originalIdSpan");
+      if (span) {
+        span.textContent = trackingId;
+      } else {
+        console.warn("⚠️ span not found");
+      }
+    } else {
+      console.warn("⚠️ No trackingId found in URL");
+    }
+
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        page.classList.toggle('active', i === index);
+      });
+      prevBtn.style.display = index === 0 ? 'none' : 'inline-block';
+      nextBtn.style.display = index === pages.length - 1 ? 'none' : 'inline-block';
+      submitBtn.style.display = index === pages.length - 1 ? 'inline-block' : 'none';
+    }
+
+    showPage(currentPage);
+
+    function loadChairApprovers() {
+      google.script.run.withSuccessHandler(data => {
+        approvers.Chair = (data.Chair || []).map(({ name, email, department }) => ({ name, email, department }));
+        approvers.HR = (data.HR || []).map(({ name, email }) => ({ name, email }));
+
+        const hrSelect = document.getElementById("hrName");
+        approvers.HR.forEach(({ name }) => {
+          const option = document.createElement("option");
+          option.value = name;
+          option.textContent = name;
+          hrSelect.appendChild(option);
+        });
+      }).getApproversForForm();
+    }
+
+    loadChairApprovers();
+
+    document.getElementById("unit").addEventListener("change", function () {
+      const selectedDept = this.value;
+      const match = approvers.Chair.find(p => p.department === selectedDept);
+      document.getElementById("departmentChairName").value = match ? match.name : "";
+      document.getElementById("chairEmail").value = match ? match.email : "";
+    });
+
+    document.getElementById("departmentChairName").addEventListener("change", function () {
+      const selectedName = this.value;
+      const entry = approvers.Chair.find(p => p.name === selectedName);
+      document.getElementById("chairEmail").value = entry ? entry.email : "";
+    });
+
+    document.getElementById("hrName").addEventListener("change", function () {
+      const selectedName = this.value;
+      const entry = approvers.HR.find(p => p.name === selectedName);
+      document.getElementById("hrEmail").value = entry ? entry.email : "";
+    });
+
+    document.getElementById("consultedHR").addEventListener("change", function () {
+      const value = this.value;
+      const hrContact = document.getElementById("hrContactFields");
+      const hrWarning = document.getElementById("hrWarning");
+      const hrName = document.getElementById("hrName");
+      const hrEmail = document.getElementById("hrEmail");
+
+      if (value === "Yes") {
+        hrContact.style.display = "block";
+        hrWarning.style.display = "none";
+        hrName.disabled = false;
+        hrEmail.disabled = false;
+        hrName.setAttribute("required", true);
+        hrEmail.setAttribute("required", true);
+      } else if (value === "No") {
+        hrContact.style.display = "none";
+        hrWarning.style.display = "block";
+        hrName.disabled = true;
+        hrEmail.disabled = true;
+        hrName.removeAttribute("required");
+        hrEmail.removeAttribute("required");
+        hrName.value = "";
+        hrEmail.value = "";
+      } else {
+        hrContact.style.display = "none";
+        hrWarning.style.display = "none";
+        hrName.disabled = true;
+        hrEmail.disabled = true;
+        hrName.removeAttribute("required");
+        hrEmail.removeAttribute("required");
+        hrName.value = "";
+        hrEmail.value = "";
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const currentFields = Array.from(pages[currentPage].querySelectorAll('input, select, textarea'))
+        .filter(el => el.offsetParent !== null);
+
+      let allValid = true;
+      let firstInvalidField = null;
+
+      for (let field of currentFields) {
+        if (field.hasAttribute('required') && !field.value.trim()) {
+          field.style.borderColor = '#a94442';
+          if (!firstInvalidField) firstInvalidField = field;
+          allValid = false;
+        } else {
+          field.style.borderColor = '';
+        }
+      }
+
+      const pageErrorDiv = document.getElementById("formPageError");
+      if (!allValid) {
+        pageErrorDiv.style.display = "block";
+        if (firstInvalidField) firstInvalidField.focus();
+        return;
+      } else {
+        pageErrorDiv.style.display = "none";
+      }
+
+      if (pages[currentPage].id === "page4") {
+        const consulted = document.getElementById("consultedHR").value;
+        const errorDiv = document.getElementById("hrConsultationError");
+        if (consulted === "No" || consulted === "") {
+          errorDiv.style.display = "block";
+          document.getElementById("consultedHR").focus();
+          return;
+        } else {
+          errorDiv.style.display = "none";
+        }
+      }
+
+      if (currentPage < pages.length - 1) {
+        currentPage++;
+        showPage(currentPage);
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 0) {
+        currentPage--;
+        showPage(currentPage);
+      }
+    });
+
+    submitBtn.addEventListener('click', () => {
+      form.dispatchEvent(new Event('submit', { cancelable: true }));
+    });
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const formData = {};
+      Array.from(form.elements).forEach(el => {
+        if (el.name === 'immigrationStatus') {
+          if (!formData.immigrationStatus) formData.immigrationStatus = [];
+          if (el.checked) formData.immigrationStatus.push(el.value);
+        } else if (el.name && el.type !== 'checkbox') {
+          formData[el.name] = el.value;
+        }
+      });
+
+      formData.isResubmission = true;
+      formData.tracking = document.getElementById("tracking").value || "";
+      formData.consultedHR = document.getElementById("consultedHR").value || '';
+      formData.hrName = document.getElementById("hrName").value || '';
+      formData.hrEmail = document.getElementById("hrEmail").value || '';
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting...";
+
+      google.script.run.withSuccessHandler(html => {
+        document.open();
+        document.write(html);
+        document.close();
+      }).submitForm(formData);
+    });
+  });
+</script>
+
+
+</body>
+</html>
