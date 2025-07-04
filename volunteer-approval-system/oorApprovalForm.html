@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    /* Same styling as HR */
+    body { font-family: 'Roboto', sans-serif; background-color: #f9f9f9; color: #003C1E; max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+    h1 { text-align: center; color: #003C1E; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-weight: bold; margin-bottom: 6px; }
+    input[type="text"], input[type="email"], textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+    .radio-group { display: flex; gap: 20px; margin-top: 8px; }
+    .radio-group label { display: flex; align-items: center; gap: 6px; font-weight: normal; }
+    .hidden { display: none; }
+    button { background-color: #FFCC33; color: #003C1E; padding: 12px 24px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; }
+    button:hover { background-color: #e6b800; }
+  </style>
+</head>
+<body>
+  <div style="text-align: left; font-size: 0.7em; color: #666; margin-top: 10px;">
+    Version 240220250620
+  </div>
+  <h1>Office of Research Approval Form</h1>
+
+  <div id="resubmissionBanner" style="
+    display: none;
+    background-color: #fef9e7;
+    border-left: 6px solid #ffcc33;
+    padding: 18px 20px;
+    margin: 28px 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: #4d3b00;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    line-height: 1.6;
+  ">
+    <!-- Text will be injected dynamically -->
+  </div>
+
+  
+  <div class="form-group" style="background-color: #e6f2ea; border-left: 6px solid #003C1E; padding: 20px; margin-bottom: 30px;">
+    <p>Once the request has been approved by both the Department Chair and HR Partner, the Office of Research will conduct a final review. This ensures that the volunteer role aligns with FoMD’s strategic priorities and institutional policies.</p>
+    <p><strong>What to do:</strong></p>
+    <ul>
+      <li>The Vice-Dean Research (or delegate) will assess the request based on:</li>
+      <ul>
+        <li>Alignment with FoMD’s strategic goals.</li>
+        <li>Confirmation that the role does not displace paid staff or students.</li>
+      </ul>
+      <li><strong>Final Decision</strong></li>
+      <ul>
+        <li>A final decision will be made to approve or reject the request.</li>
+        <li>If approved, the PI/supervisor will be notified and can proceed with the HR Service Partner.</li>
+        <li>If rejected, the Office of Research will provide a reason and may suggest alternative solutions.</li>
+      </ul>
+    </ul>
+  </div>
+
+  <form id="approvalForm">
+    <div class="form-group">
+      <label for="uniqueId">Unique ID</label>
+      <input type="text" id="uniqueId" name="uniqueId" value="<?= uniqueId ?>" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="requesterName">Requester Name</label>
+      <input type="text" id="requesterName" name="requesterName" value="<?= requestData[4] ?>" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="volunteerName">Volunteer Name</label>
+      <input type="text" id="volunteerName" name="volunteerName" value="<?= requestData[9] ?>" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="oorName">Approver Name *</label>
+      <input type="text" id="oorName" name="oorName" required placeholder="Enter your name">
+    </div>
+
+    <div class="form-group">
+      <label>Alignment with FoMD's Strategic Goals *</label>
+      <div class="radio-group">
+        <label><input type="radio" name="alignment" value="Yes"> Yes</label>
+        <label><input type="radio" name="alignment" value="No"> No</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="alignmentComments">
+        Alignment Comments <span id="alignmentRequiredMark" style="color: #a94442; display: none; font-weight: bold;">(Required if No)</span>
+      </label>
+      <textarea id="alignmentComments" name="alignmentComments" rows="3" placeholder="Comments Here"></textarea>
+      <div id="alignmentError" style="display:none; color:#a94442; font-size:0.95em; margin-top:5px;">
+        Please explain why alignment was not met.
+      </div>
+    </div>
+<!-- 
+    <div class="form-group">
+      <label>Compliance with Risk & Institutional Policies *</label>
+      <div class="radio-group">
+        <label><input type="radio" name="compliance" value="Yes"> Yes</label>
+        <label><input type="radio" name="compliance" value="No"> No</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="complianceComments">
+        Compliance Comments <span id="complianceRequiredMark" style="color: #a94442; display: none;">(required if No)</span>
+      </label>
+      <textarea id="complianceComments" name="complianceComments" rows="3" placeholder="Comments Here"></textarea>
+      <div id="complianceError" style="display:none; color:#a94442; font-size:0.95em; margin-top:5px;">
+        Please explain the compliance issue.
+      </div>
+    </div> -->
+
+    <div class="form-group">
+      <label>Final Approval Decision</label>
+      <div class="radio-group">
+        <label><input type="radio" name="approval" value="Approve" required> Approve</label>
+        <label><input type="radio" name="approval" value="Reject"> Reject</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="oorComment">
+        Comments
+        <span id="oorCommentRequired" style="color: #a94442; display: none; font-weight: bold;">(Required if Rejecting)</span>
+      </label>
+      <textarea id="oorComment" name="oorComment" rows="3" placeholder="Your comments will be shared with the requester and included in the final report."></textarea>
+      <div id="oorCommentError" style="display: none; color: #a94442; font-size: 0.95em; margin-top: 5px;">
+        Please provide a reason for rejection.
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <button type="submit">Submit Approval</button>
+    </div>
+    <div id="formMessage" style="margin-top: 1em;"></div>
+
+  </form>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const trackingId = params.get('tracking');
+
+    if (trackingId) {
+      document.getElementById('uniqueId').value = trackingId;
+
+     google.script.run.withSuccessHandler(data => {
+      if (data) {
+        const get = label => data.values[data.headers.indexOf(label)] || '';
+        document.getElementById('requesterName').value = get("Requester Name");
+        document.getElementById('volunteerName').value = get("Volunteer Name");
+
+        // Show resubmission banner if flagged
+        if (data.isResubmission && data.originalUid) {
+          const banner = document.getElementById('resubmissionBanner');
+          banner.style.display = 'block';
+          banner.textContent = `This is a resubmission from UID ${data.originalUid}. Please review and re-complete the required fields.`;
+        }
+      }
+    }).getRequestByTracking(trackingId);
+
+    }
+
+    const approvalForm = document.getElementById('approvalForm');
+    const submitButton = approvalForm.querySelector('button[type="submit"]');
+    const commentField = document.getElementById('oorComment');
+    const commentError = document.getElementById('oorCommentError');
+    const commentRequiredMark = document.getElementById('oorCommentRequired');
+
+    // === Rejection comment logic ===
+    document.querySelectorAll('input[name="approval"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const selected = document.querySelector('input[name="approval"]:checked');
+        const isReject = selected?.value === "Reject";
+
+        commentRequiredMark.style.display = isReject ? "inline" : "none";
+        commentField.required = isReject;
+        commentError.style.display = "none";
+      });
+    });
+
+    // === Alignment "No" logic ===
+    const alignmentCommentField = document.getElementById('alignmentComments');
+    const alignmentRequiredMark = document.getElementById('alignmentRequiredMark');
+
+    document.querySelectorAll('input[name="alignment"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.value === "No" && radio.checked) {
+          alignmentRequiredMark.style.display = "inline";
+          alignmentCommentField.required = true;
+        } else if (radio.value === "Yes" && radio.checked) {
+          alignmentRequiredMark.style.display = "none";
+          alignmentCommentField.required = false;
+        }
+      });
+    });
+
+    // === Compliance "No" logic ===
+    /*const complianceCommentField = document.getElementById('complianceComments');
+    const complianceRequiredMark = document.getElementById('complianceRequiredMark');
+
+    document.querySelectorAll('input[name="compliance"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.value === "No" && radio.checked) {
+          complianceRequiredMark.style.display = "inline";
+          complianceCommentField.required = true;
+        } else if (radio.value === "Yes" && radio.checked) {
+          complianceRequiredMark.style.display = "none";
+          complianceCommentField.required = false;
+        }
+      });
+    });*/
+
+    // === Form Submission ===
+    approvalForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const selectedApproval = document.querySelector('input[name="approval"]:checked');
+      const commentValue = commentField.value.trim();
+
+      const alignmentValue = document.querySelector('input[name="alignment"]:checked')?.value || '';
+      const alignmentComment = alignmentCommentField.value.trim();
+      /*const complianceValue = document.querySelector('input[name="compliance"]:checked')?.value || '';
+      const complianceComment = complianceCommentField.value.trim();*/
+
+      let hasError = false;
+
+      if (selectedApproval?.value === "Reject" && commentValue === "") {
+        commentError.style.display = "block";
+        commentField.focus();
+        hasError = true;
+      } else {
+        commentError.style.display = "none";
+      }
+
+      if (alignmentValue === "No" && alignmentComment === "") {
+        document.getElementById('alignmentError').style.display = "block";
+        hasError = true;
+      } else {
+        document.getElementById('alignmentError').style.display = "none";
+      }
+
+     /* if (complianceValue === "No" && complianceComment === "") {
+        document.getElementById('complianceError').style.display = "block";
+        hasError = true;
+      } else {
+        document.getElementById('complianceError').style.display = "none";
+      }*/
+
+      if (hasError) {
+        submitButton.textContent = 'Submit Approval';
+        submitButton.disabled = false;
+        return;
+      }
+
+      submitButton.textContent = 'Submitting...';
+      submitButton.disabled = true;
+
+      const values = {
+        requesterName: document.getElementById('requesterName').value,
+        volunteerName: document.getElementById('volunteerName').value,
+        oorName: document.getElementById('oorName').value,
+        approval: selectedApproval?.value || '',
+        oorComment: commentValue,
+        alignment: alignmentValue,
+        alignmentComments: alignmentComment,
+        /*compliance: complianceValue,
+        complianceComments: complianceComment,*/
+        rejectionReason: commentValue,
+        uniqueId: document.getElementById('uniqueId').value
+      };
+
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response === 'duplicate') {
+            document.getElementById("formMessage").innerHTML = `
+              <div style="color: #b30000; font-weight: bold; margin-top: 1em;">
+                You have already submitted approval for this request.
+              </div>
+            `;
+          } else if (response === 'success' || response === 'rejected') {
+            google.script.run
+              .withSuccessHandler(function(html) {
+                document.open();
+                document.write(html);
+                document.close();
+              })
+              .getSuccessPage('OoR');
+          } else {
+            document.getElementById("formMessage").innerHTML = `
+              <div style="color: #b30000; font-weight: bold; margin-top: 1em;">
+                An error occurred: ${response}
+              </div>
+            `;
+          }
+        })
+        .submitOoRApproval(values);
+    });
+  });
+</script>
+</body>
+</html>
