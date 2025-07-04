@@ -1,112 +1,125 @@
-# Volunteer Approval System for FoMD
+# Volunteer Request Web App for FoMD
 
-This Google Apps Script-based system automates a structured, multi-stage approval workflow for volunteer onboarding in the Faculty of Medicine & Dentistry (FoMD) at the University of Alberta. It integrates Google Forms, Google Sheets, and Drive to manage submissions, coordinate approvals, and generate final PDF summaries.
+This Google Apps Script-based web application automates a structured, multi-stage volunteer request and approval process for the Faculty of Medicine & Dentistry (FoMD) at the University of Alberta. It replaces traditional Google Forms with fully custom HTML interfaces and integrates Google Sheets, Drive, and Gmail for end-to-end coordination, approval routing, and PDF generation.
 
 ---
 
 ## Workflow Overview
 
-1. **Initial Form Submission**  
-   A requester submits a Google Form with details about the volunteer.
+1. **Volunteer Submission**  
+   A requester completes a styled, multi-page HTML form and uploads any required documents.
 
-2. **Department Chair Approval**  
-   The Department Chair receives a pre-filled approval form via email, reviews the request, and approves or rejects it.
+2. **Chair Approval**  
+   The Department Chair receives a personalized approval link by email and reviews the request.
 
 3. **HR Partner Approval**  
-   If Chair approval is granted, an HR Partner receives their own pre-filled approval form.
+   If Chair approval is granted, the designated HR Partner receives their own approval link and fields.
 
 4. **Office of Research (OoR) Final Approval**  
-   Upon HR approval, the Office of Research reviews the request and provides final approval.
+   Upon HR approval, the Office of Research provides final authorization.
 
 5. **PDF Generation**  
-   Once fully approved, the system compiles all form data and approvals into a PDF summary and emails it to all stakeholders.
+   After full approval, the system compiles all data, signatures, and key metadata into a formatted PDF, which is emailed and stored in Drive.
 
 6. **Status Tracking**  
-   Each submission is assigned a unique ID and its progress is tracked across tabs in a central Google Sheet.
+   Each request is assigned a unique ID, and status is updated across tabs in a central Google Sheet.
 
-7. **Volunteer Request Status Tracker**  
-   Submitters can enter their Unique ID into a web app to view real-time approval progress through each stage.
+7. **Resubmissions**  
+   Rejected requests can be resubmitted with updated information, triggering a fresh approval sequence.
+
+8. **Status Checker Web App**  
+   Submitters can check the real-time status of their request using a UID-based search interface.
 
 ---
 
 ## Files and Structure
 
-### `Code.gs`
-Main script file containing:
-- `generateUniqueId()` for UUID assignment
-- `onApprovalFormSubmit(e)` to detect form submissions and route logic
-- Email functions: `sendChairApprovalEmail()`, `sendHRApprovalEmail()`, `sendOoRApprovalEmail()`, `sendFinalApprovalEmail()`, `sendRejectionEmail()`, `sendSubmissionConfirmationEmail()`
-- `createFinalPDF()` to compile the final approval package
-- Helper functions: formatting, retrieval, and summary generation
+### Top-Level
+- `appsscript.json`  
+  Google Apps Script manifest file
 
-### `index.html` (optional)
-A web interface (if deployed as a Web App) for internal use to review submission data in real time.
+### `code/` – Server-side logic
+- `main.gs` – doGet() handler, form routing, and success pages
+- `pdf_generation.gs` – PDF formatting and blob creation
+- `approval_logic.gs` – Approval workflow functions for Chair, HR, and OoR
+- `email_templates.gs` – Email formatting and sending logic
+- `reminders.gs` – Reminder scheduling (3/5/10 days)
+- `utils.gs` – UID generation, value lookups, and shared helpers
 
-### `utils/copyNewTimestampWithUniqueID.gs` (optional utility)
-Used to initialize and time-stamp new submissions with a unique tracking ID.
-
-### `VolunteerRequestTracker/`
-Standalone web app for submitters to check the status of their volunteer request.
-- `Code.gs` (Web app server-side logic for serving the tracker)
-- `statusChecker.html` (Front-end HTML form and dynamic status display)
+### `html/` – Web front-end templates
+- `submission_form.html` – Volunteer submission (multi-page)
+- `resubmission_form.html` – Resubmission form (pre-filled)
+- `chairApprovalForm.html` – Chair approval interface
+- `hrApprovalForm.html` – HR approval interface
+- `oorApprovalForm.html` – Office of Research approval interface
+- `status_checker.html` – Status lookup by UID
+- `success.html` – Confirmation page after submission or final approval
+- `resubmissionSidebar.html` – Internal sidebar tool to generate resubmission links
 
 ---
 
 ## Google Sheets Structure
 
-| Sheet Name         | Sheet ID      | Description                                 |
-|--------------------|---------------|---------------------------------------------|
-| Source             | `1447833263`  | Stores raw form responses                   |
-| Chair Approval     | `362146665`   | Stores Chair approval responses             |
-| HR Approval        | `1074532913`  | Stores HR approval responses                |
-| OoR Approval       | `876106890`   | Stores final Office of Research decisions   |
-| Status             | `684280098`   | Tracks status progression for each request  |
+| Sheet Name        | Sheet ID       | Description                                       |
+|-------------------|----------------|---------------------------------------------------|
+| Form Responses    | `1130224705`   | Raw submission entries                           |
+| Chair Approval    | `362146665`    | Chair-level decisions                            |
+| HR Approval       | `1074532913`   | HR approval responses                            |
+| OoR Approval      | `876106890`    | Final decision by Office of Research             |
+| Status            | `684280098`    | Tracks each request’s current status             |
+| Approver Directory| `352748199`    | Lookup for Chair/HR/ADM names + emails           |
 
 ---
 
 ## Technical Requirements
 
-- A central Google Spreadsheet with the above tabs and column ordering aligned to the script
-- Three separate Google Forms (Chair, HR, OoR), each configured to:
-  - Accept pre-filled parameters (e.g., requester name, volunteer name, unique ID)
-  - Store decisions and optional comments
-- File access:
-  - Submitters must share Waiver and Background Check files via Google Drive
-- Script permissions:
-  - Must be authorized to send email and access Google Drive
-- Deployment:
-  - Script must be deployed as a Web App only if using the optional interfaces
+- **Google Spreadsheet** with the above tabs
+- **Deployed Web App** with:
+  - `doGet(e)` serving all form and success routes
+  - `doPost(e)` if needed for fetch-based submissions
+- **Google Drive Folder** for storing final PDFs
+- **Script Authorization** to access:
+  - Google Sheets (read/write)
+  - Gmail (sendEmail)
+  - Drive (createFile)
 
 ---
 
 ## Behavior Details
 
-- **UUID Generation**: Each submission is assigned a unique identifier for tracking across forms and sheets.
-- **Conditional Routing**: Form submission triggers determine the source sheet and route the request accordingly.
-- **Automated Emails**:
-  - Prefilled approval forms are emailed at each stage.
-  - Rejection triggers notification with comments.
-  - A final PDF is created and emailed only after all three approvals are received.
-- **Volunteer Status Tracking**:
-  - A web app allows submitters to track progress by entering their Unique ID.
-  - Displays approval status, rejection reasons, and current approver in real-time.
-- **PDF Composition**:
-  - Includes a logo, form answers, clickable waiver/background links, and an approvals table.
-  - Sent as an attachment to requester, approvers, and administrative contacts.
+- **UID Generation**  
+  Each submission is assigned a persistent Unique ID for cross-sheet matching and status checks.
+
+- **Conditional Email Routing**  
+  Chair → HR → OoR approvals are sequentially triggered only after the prior approver signs.
+
+- **Resubmission Support**  
+  Rejected entries can be re-submitted via a special link, marked and tracked as "Resubmission."
+
+- **Reminder Emails**  
+  Automatically sent to approvers after 3, 5, and 10 days if no action is taken.
+
+- **PDF Summary Generation**  
+  Final approval triggers a custom PDF with all form data, links, comments, and signatures. This is attached to the final confirmation email and stored in Drive.
+
+- **Status Checker**  
+  Submitters can use the UID to check current approval status, rejection reasons, or resubmission needs.
 
 ---
 
 ## Known Limitations
 
-- If form structure changes (column order, field labels), script functions must be updated accordingly.
-- Drive file permissions must be managed manually by submitters unless an automated sharing script is added.
-- The system does not currently support re-submission or editing after rejection (can be implemented with version control logic).
+- Sheet column order must remain consistent with the script logic.
+- File uploads are limited to PDF format and must be stored in Drive.
+- Drive sharing permissions must be manually reviewed if users lack access.
+- Only one active submission per volunteer at a time is supported (based on duplicate logic).
 
 ---
 
 ## Support and Contact
 
-For issues, improvements, or integration assistance, please contact:  
+For issues or integration support, please contact:
+
 **FoMD Office of Research**  
 **Email**: vdradmin@ualberta.ca
 
@@ -115,6 +128,6 @@ For issues, improvements, or integration assistance, please contact:
 ## License
 
 This project is licensed under the [Creative Commons BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).  
-You may share and adapt the system for non-commercial use with proper attribution. Commercial use is prohibited without permission.
+You may share and adapt the system for non-commercial purposes with attribution. Commercial use is prohibited without written consent.
 
 ---
